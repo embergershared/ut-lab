@@ -179,6 +179,7 @@ You will create a Unit Test with MSTestV2 to test the `ConsoleMgr.WriteLine(stri
 
 - Check the test `Passed`.
 
+  ![Launch Debug](./img/Test1_SeeResult.png)
 
 
 
