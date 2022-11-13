@@ -54,6 +54,8 @@ This ConsoleApp:
   2. if `"Enter"` is typed, clears the screen
   3. if `"q"` is typed, exits the program
 
+- Start it to check it works:
+
 
 ### Add a MSTest project to the solution
 
