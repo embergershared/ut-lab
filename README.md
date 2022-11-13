@@ -26,7 +26,7 @@ The technologies used in this Lab are:
 > - [Microsoft Fakes](https://learn.microsoft.com/en-us/visualstudio/test/isolating-code-under-test-with-microsoft-fakes?view=vs-2022&tabs=csharp)
 > - [Code coverage](https://learn.microsoft.com/en-us/visualstudio/test/using-code-coverage-to-determine-how-much-code-is-being-tested?view=vs-2022&tabs=csharp)
 >
-> The lab will not cover these features, but we will show some of them in the demos.
+> The lab will not cover these features, but we will show some of them during the demos.
 
 ---
 
@@ -34,7 +34,7 @@ The technologies used in this Lab are:
 
 ---
 
-### Setup Start solution
+### 0. Setup the lab environment
 
 To get started:
 
@@ -93,7 +93,7 @@ You will create a Unit Test with MSTestV2 to test the `ConsoleMgr.WriteLine(stri
 
 ---
 
-### 1st Unit Test
+### 1. 1st Unit Test
 
 - Rename `UnitTest1.cs` file to `ConsoleMgrShould.cs`
 - Accept Visual Studio rename all references by clicking `Yes`
@@ -151,9 +151,9 @@ You will create a Unit Test with MSTestV2 to test the `ConsoleMgr.WriteLine(stri
     }
 ```
 
-  > The variable `sut` stands for `System Under Test`. With this convention, we easily know what is tested in the unit test code
+  > The variable `sut` stands for `System Under Test`. With this convention, we easily know what is tested in the unit test code.
   >
-  > The `expected` and `actual` (or `result`) variables' names are usual names used in unit test. It helps distinguish right away the elements in the `Assert`.
+  > The `expected` and `actual` (or `result`) variables' names are usual names used in unit testing. It helps distinguish right away the elements for the `Assert`.
 
 - Run `Test / Run All Tests`
 
@@ -181,7 +181,15 @@ You will create a Unit Test with MSTestV2 to test the `ConsoleMgr.WriteLine(stri
 
   ![Launch Debug](./img/Test1_SeeResult.png)
 
+---
 
+### 2. Unit Testing a Calculator
+
+In this exercise, we will create and test a very simple calculator to explore:
+
+- Catching exceptions in Unit Tests
+- Use multiple data in a test (Data-driven testing)
+- Create a test before a Method implementation (TDD)
 
 
 
