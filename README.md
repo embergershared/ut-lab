@@ -5,8 +5,8 @@
 In this Lab, you will:
 
 - start from a simple ConsoleApp implemented for testing and create simple Unit Test,
-- Add a basic Calculator class and Unit Test it,
-- use a TDD approach to implement the `divide` method in the Calculator,
+- Add a basic Calculator class and Unit Test its `Add` method,
+- use a TDD approach to implement the `Divide` method in the Calculator,
 - add more tests with different Asserts, attributes and settings for the tests,
 - to end with wiring an external MS SQL database for tests values.
 
@@ -32,7 +32,9 @@ The technologies used in this Lab are:
 
 ## Lab instructions
 
-### Prepare the environment
+---
+
+### Setup Start solution
 
 To get started:
 
@@ -58,27 +60,127 @@ This ConsoleApp:
 
 ![Console](./img/ConsoleApp_display.png)
 
+- Look at the way the `static Main()` in `Program.cs` initialize dependency injection then:
+  - Start an instance of `IPogramMgr` with the `Run()` method,
+  - And the `ProgramMgr` class gets an `IConsoleMgr` instance injected.
+
+This allows to decouple the pieces with `seams` interfaces and enables easier testing.
 
 ### Add a MSTest project to the solution
 
+You will create a Unit Test with MSTestV2 to test the `ConsoleMgr.WriteLine(string value)` method.
 
 - Add a new Project to the solution:
   - `Project type: MSTest Test Project`
   - `Project name: ConsoleAppTests`
   - `Framework: .NET 6.0 (LTS)`
 
-- Open project `ConsoleAppTests` properties (Alt + Enter) and:
+- In `ConsoleAppTests` project, right click on `Dependencies` and `Add Project Reference` to the project `ConsoleApp`
+  > This makes our ConsoleApp code available for our tests.
 
-  - Right click on `Dependencies` and `Add Project Reference` to the project `ConsoleApp`
-    > This makes our ConsoleApp code available for our tests.
+- Open project `ConsoleAppTests` properties (Alt + Enter) and:
 
   - Select `Global Usings / General`
   - Uncheck `Implicit global usings | Enable implicit global usings to be declared by the project SDK`
-  - Delete `Usings.cs` file
-  - Add `using Microsoft.VisualStudio.TestTools.UnitTesting;` on the first line of the `UnitTest.cs` file
-    > This allows to see all the dependencies explicitly in the code.
+
+  > This allows to see all the dependencies explicitly in the code.
+
+- Delete `Usings.cs` file
+
+- Add `using Microsoft.VisualStudio.TestTools.UnitTesting;` on the first line of the `UnitTest1.cs` file
+
+- File / Save All.
+
+---
 
 ### 1st Unit Test
+
+- Rename `UnitTest1.cs` file to `ConsoleMgrShould.cs`
+- Accept Visual Studio rename all references by clicking `Yes`
+
+  > It is recommended to name a test class `"<ClassUnderTestName>Should"`.
+
+- Delete the method `TestMethod1()`
+
+- Create the following Test method in `ConsoleMgrShould.cs`:
+
+```cs
+    [TestMethod]
+    public void WriteLine_WritesToSystemConsole()
+    {
+        // Arrange
+
+        // Assert
+
+        // Act
+        Assert.Inconclusive();
+    }
+```
+
+  > This simple unit test method has the structure recommended for a Unit Test:
+  >
+  > - Its name starts by the method it tests, then a name related to the test
+  >
+  > - The 3 steps of a Unit Test are separated
+  >
+  > - Adding Assert.Inconclusive() will make the test `Skipped` but remind you that the test is not doing anything (yet)
+
+- Run `Test / Run All Tests` from Visual Studio Menu and check in the Test Explorer the result:
+
+![Skipped Test1](./img/Test1_Inconclusive.png)
+
+- Replace the code in the test method for:
+
+```cs
+    [TestMethod]
+    public void WriteLine_WritesToSystemConsole()
+    {
+        // Arrange
+        const string expected = "Hello to the console";
+        var sut = new ConsoleMgr();
+
+        using var sw = new StringWriter();
+        Console.SetOut(sw);
+
+        // Act
+        sut.WriteLine(expected);
+        var actual = sw.ToString();
+
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+```
+
+- Run `Test / Run All Tests`
+
+- The test fails
+
+- Let's debug the test:
+
+  - Put a breakpoint (F9) on the line `var actual = ...`
+
+  - In the Test Explorer, right-click on the test and launch `Debug`:
+
+![Launch Debug](./img/Test1_LaunchDebug.png)
+
+  - You can see in the breakpoint that we get an object that may not render back our expected variable as we don't control the formatting of the `.ToString()` extension
+
+  ![Launch Debug](./img/Test1_SeeDebug.png)
+
+  - To fix the test: add `.Trim()` after the `.ToString()` for the actual value
+
+  > The line should be: `var actual = sw.ToString().Trim();`
+
+- Run `Test / Run All Tests`
+
+- Check the test `Passed`.
+
+
+
+
+
+
+
 
 
 
