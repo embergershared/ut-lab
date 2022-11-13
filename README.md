@@ -40,7 +40,7 @@ To get started:
 
 - Clone the repo locally: `git clone https://github.com/embergershared/ut-lab.git`
 
-- Open the solution `/Start/UnitTestLab.sln` in Visual Studio
+- Open the solution `/0.Start/UnitTestLab.sln` in Visual Studio
 
 - See the solution content:
 
@@ -151,6 +151,10 @@ You will create a Unit Test with MSTestV2 to test the `ConsoleMgr.WriteLine(stri
     }
 ```
 
+  > The variable `sut` stands for `System Under Test`. With this convention, we easily know what is tested in the unit test code
+  >
+  > The `expected` and `actual` (or `result`) variables' names are usual names used in unit test. It helps distinguish right away the elements in the `Assert`.
+
 - Run `Test / Run All Tests`
 
 - The test fails
@@ -169,7 +173,7 @@ You will create a Unit Test with MSTestV2 to test the `ConsoleMgr.WriteLine(stri
 
   - To fix the test: add `.Trim()` after the `.ToString()` for the actual value
 
-  > The line should be: `var actual = sw.ToString().Trim();`
+    > The line should now be: `var actual = sw.ToString().Trim();`
 
 - Run `Test / Run All Tests`
 
