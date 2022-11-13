@@ -4,8 +4,9 @@
 
 In this Lab, you will:
 
-- start from a basic Calculator class and create a simple Unit Test,
-- use a TDD approach to implement the divide method in the Calculator,
+- start from a simple ConsoleApp implemented for testing and create simple Unit Test,
+- Add a basic Calculator class and Unit Test it,
+- use a TDD approach to implement the `divide` method in the Calculator,
 - add more tests with different Asserts, attributes and settings for the tests,
 - to end with wiring an external MS SQL database for tests values.
 
@@ -33,11 +34,11 @@ The technologies used in this Lab are:
 
 ### Prepare the environment
 
-- Download the starting project from here:
+To get started:
 
-- Unzip the project in a folder
+- Clone the repo locally: `git clone https://github.com/embergershared/ut-lab.git`
 
-- Open the solution in Visual Studio
+- Open the solution `/Start/UnitTestLab.sln` in Visual Studio
 
 - See the solution content:
 
