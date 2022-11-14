@@ -761,13 +761,25 @@ With this technique, the tests can be automated, pulling different data-sets thr
 
 To leverage the Unit Tests in pipelines and other automation tools, the command-line interface is the base to use.
 
+- Open a Terminal in the `ConsoleAppTests` directory
 
+- Execute: `dotnet test`
 
+  - Check that the tests fail (`- Failed:     1, Passed:     4`)
+
+  > That is because our tests for `Divide_TwoValues_Calculates()` requires parameters from the `lab.runsettings`
+
+- Execute: `dotnet test .\ConsoleAppTests.csproj --settings .\lab.runsettings --logger "console;verbosity=detailed"`
+
+  - Check all the tests `Pass`:
+
+    ![Passing tests](./img/Test3_Img10.png)
+
+There is more options, like `--filter`, `--runtime`, `--environment` etc.
+
+See the .NET test driver [reference](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test) for more information.
 
 ---
-
-
-
 
 ## References
 
