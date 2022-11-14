@@ -61,9 +61,9 @@ This ConsoleApp:
 
 - Look at the way the `static Main()` in `Program.cs` initialize dependency injection then:
   - Start an instance of `IPogramMgr` with the `Run()` method,
-  - And the `ProgramMgr` class gets an `IConsoleMgr` instance injected.
+  - And the `ProgramMgr` class gets an `IConsoleMgr` - a wrapper for the platform's Console - instance injected.
 
-This allows to decouple the pieces with `seams` interfaces and enables easier testing.
+This allows to decouple the pieces with `seams` and enables easier testing.
 
 ### Add a MSTest project to the solution
 
@@ -211,7 +211,7 @@ Let's get started:
 
 - Make the class `public`
 
-- Add the [TestClass] attribute to the class (just above the `public class` declaration)
+- Add the `[TestClass]` attribute to the class (just above the `public class` declaration)
 
   > This attribute tells MSTestV2 to include this class in its tests
 
@@ -262,7 +262,7 @@ Let's get started:
 
 - Run All tests
 
-- See that the test `Passed` as we expect an Exception and receive it:
+- See that the test `Passed` as we expect an Exception of type `NotImplementedException` and receive it:
 
   ![ThrownException Pass](./img/Test2_PassThrownException.png)
 
@@ -321,13 +321,13 @@ Let's implement the `Add(a, b)` method in `Calculator.cs`:
 
   ![Data-driven test](./img/Test2_DD-Test.png)
 
-> Notes:
+> Notice:
 >
-> - The attributes `[Owner()]`, `[Priority()]` & `[TestCategory()]` generates `Traits` that can be use later to filter the tests, sort the results, etc.
+> - The attributes `[Owner()]`, `[Priority()]` & `[TestCategory()]` generates `Traits` that can be used later to filter the tests, like in `dotnet test [] --filter "Priority=2"`.
 >
 > - The attribute `[Description()]` is added to the `TestContext` and we'll use it later
 >
-> - The `[DataRow()]` attribute allows us to pass data as a `object[]` type. Each attribute generates a test of the test method. The `DisplayName` argument allows to differentiate the tests instances in the display, as one or more can `Fail`
+> - The `[DataRow()]` attribute allows us to pass data as an `object[]` type. Each attribute generates a test of the test method. The `DisplayName` argument allows to differentiate the tests instances in the display, as one or more can `Fail`
 >
 > - Notice that we also test the "edge" cases with the `double.MaxValue` value
 
@@ -339,10 +339,10 @@ We will implement a `Divide()` method for the `Calculator` class.
 
 To do that, let's think about the tests that support the **behavior** we want to achieve:
 
-- What should happen when we "divide 10 by 2?" => we get 5
-- What should happen when we "divide 34.67 by 9.6?" => we get 3.6114583333333333333333
-- What should happen when we "divide _anything_ by 0?" => we decide we want to get 0
-- What should happen when we "divide 10 by -5?" => we get -2
+- What should happen when we "divide `10` by `2`?" => we get `5`
+- What should happen when we "divide `34.67` by `9.6`?" => we get `3.6114583333...`
+- What should happen when we "divide `_anything_` by `0`?" => we decide we want to get `0`
+- What should happen when we "divide `10` by `-5`?" => we get `-2`
 
 We can create the tests for that:
 
@@ -391,11 +391,11 @@ The build of `ConsoleAppTests` now fails. Because the `Calculator` class does no
     ![Failing rounding](./img/Test2_TDD-Step2.png)
 
     For this test to pass, we have to set the `accuracy` of our test, by setting its `delta`.
-    This change is to be done **in the test method**:
+    This change is done **in the test method**:
 
     - Add the `delta` argument to the Assert line: `Assert.AreEqual(expected, actual, 0.0001);`
 
-    The accuracy should be adapted to the Data provided for the expected result of the test
+    The accuracy should be adapted to the `Test data` provided to the test
 
   - Division by zero
 
