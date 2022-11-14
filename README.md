@@ -499,7 +499,7 @@ As this can be handy for all test classes, we will use the fact that unit tests 
 
   > Note: You'll need the `using System;` & `using System.Reflection;` if Visual Studio didn't add it for you.
 
-- Modify `CalculatorShould` class to inherit from `TestBase`
+- Modify `CalculatorShould` class to inherit from `: TestBase`
 
 - Add `WriteDescription(GetType());` at the beginning of the method `Add_TwoValues_Calculates()`. The method content should like this now:
 
@@ -569,7 +569,7 @@ In the `CalculatorShould` class:
 
 
 
-#### `dotnet test`
+#### `dotnet test` CLI
 
 
 
