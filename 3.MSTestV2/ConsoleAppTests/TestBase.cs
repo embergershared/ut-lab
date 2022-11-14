@@ -25,5 +25,11 @@ namespace ConsoleAppTests
                 TestContext.WriteLine($"Test description: {descAttribute.Description}");
             }
         }
+
+        protected void WriteLabContext()
+        {
+            if (TestContext == null || string.IsNullOrEmpty((string?)TestContext.Properties["LabContext"])) return;
+            TestContext.WriteLine($"Lab context: {TestContext.Properties["LabContext"]}");
+        }
     }
 }

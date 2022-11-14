@@ -128,7 +128,7 @@ You will create a Unit Test with MSTestV2 to test the `ConsoleMgr.WriteLine(stri
   >
   > - The 3 steps of a Unit Test are separated
   >
-  > - Adding Assert.Inconclusive() will make the test `Skipped` but remind you that the test is not doing anything (yet)
+  > - Adding Assert.Inconclusive() will make the test `Skipped`. Typically, you add an `Assert.Inconclusive` statement to a test that you are still working on, to indicate it's not yet ready to be run.
 
 - Run `Test / Run All Tests` from Visual Studio Menu and check in the Test Explorer the result:
 
@@ -559,8 +559,63 @@ In the `CalculatorShould` class:
 
 #### runsettings
 
+Unit tests in Visual Studio can be configured by using a `.runsettings` file. For example, you can change the .NET version on which the tests are run, the directory for the test results, or the data that's collected during a test run. A common use of a `.runsettings` file is to customize [code coverage analysis](https://learn.microsoft.com/en-us/visualstudio/test/customizing-code-coverage-analysis?view=vs-2022).
 
+Let's create a .runsettings file:
 
+- In `ConsoleAppTests` project, add a new Item of type `XML File`, named `lab.runsettings`
+
+- Add the following content in it:
+
+```xml
+<RunSettings>
+  <TestRunParameters>
+    <Parameter name="LabContext"
+               value="H&amp;R Block BCA team" />
+  </TestRunParameters>
+</RunSettings>
+```
+
+- Save the file
+
+- Set the `lab.runsettings` property `Copy to Output Directory` to `Copy if newer`
+
+- There 4 ways to select a `.runsettings` file:
+
+  - [Autodetect the run settings](https://learn.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file?view=vs-2022#autodetect-the-run-settings-file)
+  - [Manually select the run settings](https://learn.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file?view=vs-2022#manually-select-the-run-settings-file)
+  - [Set a build property](https://learn.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file?view=vs-2022#set-a-build-property)
+  - [dotnet test `--settings`](https://learn.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file?view=vs-2022#specify-a-run-settings-file-from-the-command-line)
+
+We'll use the manual selection:
+
+- In `Test` menu select: `Configure Run Settings / Select Solution Wide runsettings File`
+
+  ![Passing tests](./img/Test3_Img2.png)
+
+- Select the file `lab.runsettings`
+
+Let's use the parameter. It is available through the `TestContext.Properties["<Parameter name>"]`:
+
+- In `TestBse.cs` add the following method:
+
+  ```cs
+  protected void WriteLabContext()
+  {
+      if (TestContext == null || string.IsNullOrEmpty((string?)TestContext.Properties["LabContext"])) return;
+      TestContext.WriteLine($"Lab context: {TestContext.Properties["LabContext"]}");
+  }
+  ```
+
+- In `CalculatorShould.cs`, add this line to the `TestInitialize()` method:
+
+    ```cs
+    WriteLabContext();
+    ```
+
+- Run All Tests and check the new message:
+
+  ![Passing tests](./img/Test3_Img3.png)
 
 
 
@@ -581,6 +636,8 @@ In the `CalculatorShould` class:
 
 ## References
 
+### Lab creation support material
+
 To create this Lab for H&R Block's BAC team's DevOps continuous quality workshop, the following sources were used:
 
 - [Testing in .NET](https://learn.microsoft.com/en-us/dotnet/core/testing/)
@@ -589,3 +646,26 @@ To create this Lab for H&R Block's BAC team's DevOps continuous quality workshop
 - [Pluralsight | Implementing C# 9 Unit Testing Using Visual Studio 2019 and .NET 5](https://app.pluralsight.com/library/courses/basic-unit-testing-csharp-developers/table-of-contents)
 - [Pluralsight | Testing .NET Code with xUnit.net 2: Getting Started](https://app.pluralsight.com/library/courses/dotnet-core-testing-code-xunit-dotnet-getting-started/table-of-contents)
 - [Tim Corey | Intro to Unit Testing in C# using xUnit](https://youtu.be/ub3P8c87cwk)
+
+### Assert reference
+
+The use of "Asserts" is key to Unit Testing and presents many methods.
+
+They are of 3 types:
+
+1. Positive (like `AreEqual`, `AreSame`...)
+2. Negative (like `AreNotEqual`, `IsFalse`...)
+3. Other (like `Fail`, `Inconclusive`)
+
+One can leverage these main "Asserts" classes:
+
+- [`Assert`](https://learn.microsoft.com/en-us/dotnet/api/microsoft.visualstudio.testtools.unittesting.assert?view=visualstudiosdk-2022) to test:
+
+  - booleans
+  - strings
+  - objects
+  - Exceptions
+
+- [`CollectionAssert`](https://learn.microsoft.com/en-us/dotnet/api/microsoft.visualstudio.testtools.unittesting.collectionassert?view=visualstudiosdk-2022), to test various conditions associated with collections of objects.
+
+- [`StringAssert`](https://learn.microsoft.com/en-us/dotnet/api/microsoft.visualstudio.testtools.unittesting.stringassert?view=visualstudiosdk-2022) to compare and examine strings.

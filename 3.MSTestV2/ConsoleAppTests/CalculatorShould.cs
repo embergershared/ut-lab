@@ -9,6 +9,7 @@ namespace ConsoleAppTests
         [TestInitialize]
         public void TestInitialize()
         {
+            WriteLabContext();
             WriteDescription(GetType());
         }
 
@@ -22,8 +23,6 @@ namespace ConsoleAppTests
         [DataRow(double.MaxValue, 100, double.MaxValue, DisplayName = "Test for (double) MaxValue")]
         public void Add_TwoValues_Calculates(double a, double b, double expected)
         {
-            //WriteDescription(GetType());
-
             // Arrange
             var sut = new Calculator();
 
