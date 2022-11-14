@@ -2,6 +2,30 @@
 
 [[_TOC_]]
 
+- Overview
+- Lab instructions
+  - 0. Setup the lab environment
+        - clone the lab repo
+        - Add a MSTest project to the solution
+  - 1. The first Unit Test
+        - Create a "blank" Unit Test
+        - Create a simple Unit Test
+  - 2. Unit Testing a Calculator
+        - Test for Exception(s)
+        - Create an Inline Data-driven test
+        - Create the Tests before the implementation (or TDD)
+  - 3. MSTestV2
+        - TestContext
+        - Initialization & Cleanup
+        - `runsettings`
+        - Create a Dynamic from SQL Data-driven test
+        - `dotnet test` CLI
+- References
+  - Lab creation support material
+  - Assert reference
+  - Unit Test Attributes reference
+  - Dependencies & Mocks, Microsoft Fakes with Stubs & Shims
+
 ## Overview
 
 In this Lab, you will:
@@ -278,7 +302,7 @@ Let's get started:
     >
     > For fun, replace the `throw new NotImplementedException();` by `throw new ArgumentNullException();` and see that the test `Fail`
 
-#### Use a (Inline) Data-driven test
+#### Create an Inline Data-driven test
 
 Let's implement the `Add(a, b)` method in `Calculator.cs`:
 
@@ -617,7 +641,7 @@ Let's use the parameter. It is available through the `TestContext.Properties["<P
 
   ![Passing tests](./img/Test3_Img3.png)
 
-#### Data-driven from SQL
+#### Create a Dynamic from SQL Data-driven test
 
 We will create a SQL server table with the test data and use it for our unit tests.
 
