@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ConsoleApp.Classes;
+using System;
+using System.Data;
 
 namespace ConsoleAppTests
 {
@@ -38,20 +40,37 @@ namespace ConsoleAppTests
         [Owner("Emmanuel")]
         [Priority(2)]
         [TestCategory("NormalValues")]
-        [DataRow(10, 2, 5, DisplayName = "Test for 10 / 5")]
-        [DataRow(34.67, 9.6, 3.6114, DisplayName = "Test for 34.67 / 9.6")]
-        [DataRow(56, 0, 0, DisplayName = "Test for 56 / 0")]
-        [DataRow(10, -5, -2, DisplayName = "Test for 10 / -5")]
-        public void Divide_TwoValues_Calculates(double a, double b, double expected)
+        public void Divide_TwoValues_Calculates()
         {
             // Arrange
             var sut = new Calculator();
 
-            // Act
-            var actual = sut.Divide(a, b);
+            var sqlQuery = "SELECT * FROM ";
+            sqlQuery += TestContext!.Properties["DivideTestDataTableName"]!.ToString();
+            var sqlConnString = TestContext!.Properties["ConnectionString"]!.ToString();
+            
+            if (sqlConnString != null)
+            {
+                var dataTable = LoadTestDataFromSql(sqlConnString, sqlQuery);
 
-            // Assert
-            Assert.AreEqual(expected, actual, 0.0001);
+                if (dataTable.Rows.Count > 0)
+                {
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        // Get the test values
+                        var a = Convert.ToDouble(row["Arg1Value"]);
+                        var b = Convert.ToDouble(row["Arg2Value"]);
+                        var expected = Convert.ToDouble(row["ExpectedValue"]);
+
+                        // Act
+                        TestContext.WriteLine($"Testing: {a} / {b} = {expected}");
+                        var actual = sut.Divide(a, b);
+
+                        // Assert
+                        Assert.AreEqual(expected, actual, 0.0001);
+                    }
+                }
+            }
         }
     }
 }

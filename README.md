@@ -268,7 +268,7 @@ Let's get started:
     }
     ```
 
-- Run All tests
+- `Test / Run All Tests`
 
 - See that the test `Passed` as we expect an Exception of type `NotImplementedException` and receive it:
 
@@ -278,7 +278,7 @@ Let's get started:
     >
     > For fun, replace the `throw new NotImplementedException();` by `throw new ArgumentNullException();` and see that the test `Fail`
 
-#### Use a Data-driven test
+#### Use a (Inline) Data-driven test
 
 Let's implement the `Add(a, b)` method in `Calculator.cs`:
 
@@ -519,7 +519,7 @@ As this can be handy for all test classes, we will use the fact that unit tests 
   }
   ```
 
-- Run All Tests
+- `Test / Run All Tests`
 
 - Look at the Test Detail Summary of one of the 3 tests and see the message, in the `Standard Output: TestContext Messages:` section:
 
@@ -553,7 +553,7 @@ In the `CalculatorShould` class:
   }
   ```
 
-- Run All Tests
+- `Test / Run All Tests`
 
 - See the `TestContext Messages` all showing the description from the test method attribute `[Description()]`
 
@@ -613,18 +613,153 @@ Let's use the parameter. It is available through the `TestContext.Properties["<P
     WriteLabContext();
     ```
 
-- Run All Tests and check the new message:
+- `Test / Run All Tests` and check the new message:
 
   ![Passing tests](./img/Test3_Img3.png)
 
-
-
 #### Data-driven from SQL
 
+We will create a SQL server table with the test data and use it for our unit tests.
 
+- Open the `SQL Server Object Explorer` from Visual Studio View menu:
 
+  ![Passing tests](./img/Test3_Img4.png)
+
+- You should have `MSSQLLocalDB` instance. If you don't skip this exercise:
+
+  ![Passing tests](./img/Test3_Img5.png)
+
+- If you don't have a Database, create one (suggested name: `Sandbox`):
+
+  ![Passing tests](./img/Test3_Img6.png)
+
+- In the database, create a `New Query` and paste this T-SQL code in it:
+
+```sql
+CREATE TABLE [dbo].[CalculatorDivideTestsData](
+ [Id] [int] NOT NULL PRIMARY KEY IDENTITY(1,1),
+ [Arg1Value] [float] NULL,
+ [Arg2Value] [float] NULL,
+ [ExpectedValue] [float] NULL
+) ON [PRIMARY]
+GO
+
+INSERT INTO [dbo].[CalculatorDivideTestsData] ( [Arg1Value], [Arg2Value], [ExpectedValue])
+VALUES (10, 2, 5);
+
+INSERT INTO [dbo].[CalculatorDivideTestsData] ( [Arg1Value], [Arg2Value], [ExpectedValue])
+VALUES (34.67, 9.6, 3.6114);
+
+INSERT INTO [dbo].[CalculatorDivideTestsData] ( [Arg1Value], [Arg2Value], [ExpectedValue])
+VALUES (56, 0, 0);
+
+INSERT INTO [dbo].[CalculatorDivideTestsData] ( [Arg1Value], [Arg2Value], [ExpectedValue])
+VALUES (10, -5, -2);
+```
+
+- Execute the command (Check you're connected to the `Sandbox` database):
+
+  ![Passing tests](./img/Test3_Img7.png)
+
+- Open the table (Right-click / View Data) to see the data:
+
+  ![Passing tests](./img/Test3_Img8.png)
+
+Now that we have the test data we can use it:
+
+- First, check we didn't break anything - That's one benefit of Unit Tests - and `Test / Run All Tests`
+
+- There is a trick: [**.NET Core does not support the DataSource attribute**](https://learn.microsoft.com/en-us/visualstudio/test/how-to-create-a-data-driven-unit-test?view=vs-2022#add-a-testcontext-to-the-test-class), so we will access the SQL data through a SQL client
+
+- in `lab.runsettings` file, add the parameter for the connection string (you get the connection string from the Database property in the SQL Server Object explorer view):
+
+  ```xml
+  <Parameter name="ConnectionString"
+              value="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Sandbox;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False" />
+  <Parameter name="DivideTestDataTableName"
+              value="dbo.CalculatorDivideTestsData" />
+  ```
+
+- Add the NuGet packages: `System.Data.SqlClient`
+
+- In the `TestBase.cs` class, add the protected method `LoadTestDataFromSql` with this code - it allows to fetch data from SQL Server:
+
+  ```cs
+  protected DataTable LoadTestDataFromSql(string connection, string query)
+  {
+      var dataTable = new DataTable();
+
+      try
+      {
+          using var conn = new SqlConnection(connection);
+          using var cmd = new SqlCommand(query, conn);
+          using var da = new SqlDataAdapter(cmd);
+          da.Fill(dataTable);
+      }
+      catch (SqlException ex)
+      {
+          TestContext?.WriteLine("Exception occurred in LoadTestDataFromSql: {0}", ex);
+      }
+
+      return dataTable;
+  }
+  ```
+
+  > Note: You'll need the `using System.Data;` & `using System.Data.SqlClient;` if Visual Studio didn't add it for you.
+
+  - Save the changes
+
+- In the `CalculatorShould.cs` class:
+
+  - Remove the `[DataRow()]` attributes from the `Divide_TwoValues_Calculates()` test method
+  - Replace `Divide_TwoValues_Calculates()` method content for:
+
+    ```cs
+    public void Divide_TwoValues_Calculates()
+    {
+        // Arrange
+        var sut = new Calculator();
+
+        var sqlQuery = "SELECT * FROM ";
+        sqlQuery += TestContext!.Properties["DivideTestDataTableName"]!.ToString();
+        var sqlConnString = TestContext!.Properties["ConnectionString"]!.ToString();
+        
+        if (sqlConnString != null)
+        {
+            var dataTable = LoadTestDataFromSql(sqlConnString, sqlQuery);
+
+            if (dataTable.Rows.Count > 0)
+            {
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    // Get the test values
+                    var a = Convert.ToDouble(row["Arg1Value"]);
+                    var b = Convert.ToDouble(row["Arg2Value"]);
+                    var expected = Convert.ToDouble(row["ExpectedValue"]);
+
+                    // Act
+                    TestContext.WriteLine($"Testing: {a} / {b} = {expected}");
+                    var actual = sut.Divide(a, b);
+
+                    // Assert
+                    Assert.AreEqual(expected, actual, 0.0001);
+                }
+            }
+        }
+    }
+    ```
+
+  - `Test / Run All Tests`
+
+  - Check the Results:
+
+  ![Passing tests](./img/Test3_Img9.png)
+
+With this technique, the tests can be automated, pulling different data-sets through the application release process.
 
 #### `dotnet test` CLI
+
+To leverage the Unit Tests in pipelines and other automation tools, the command-line interface is the base to use.
 
 
 
@@ -659,13 +794,35 @@ They are of 3 types:
 
 One can leverage these main "Asserts" classes:
 
-- [`Assert`](https://learn.microsoft.com/en-us/dotnet/api/microsoft.visualstudio.testtools.unittesting.assert?view=visualstudiosdk-2022) to test:
-
-  - booleans
-  - strings
-  - objects
-  - Exceptions
+- [`Assert`](https://learn.microsoft.com/en-us/dotnet/api/microsoft.visualstudio.testtools.unittesting.assert?view=visualstudiosdk-2022) to test various conditions.
 
 - [`CollectionAssert`](https://learn.microsoft.com/en-us/dotnet/api/microsoft.visualstudio.testtools.unittesting.collectionassert?view=visualstudiosdk-2022), to test various conditions associated with collections of objects.
 
 - [`StringAssert`](https://learn.microsoft.com/en-us/dotnet/api/microsoft.visualstudio.testtools.unittesting.stringassert?view=visualstudiosdk-2022) to compare and examine strings.
+
+### Unit Test Attributes reference
+
+As we saw, Attributes (or decorators) are widely used in MSTest to configure and improve the Unit Tests.
+
+Few attributes were not covered in the lab, and worth mentioning:
+
+- [DeploymentItem](https://learn.microsoft.com/en-us/dotnet/api/microsoft.visualstudio.testtools.unittesting.deploymentitemattribute?view=visualstudiosdk-2022): Used to specify deployment item (file or directory) for per-test deployment.
+- [Timeout](https://learn.microsoft.com/en-us/dotnet/api/microsoft.visualstudio.testtools.unittesting.timeoutattribute?view=visualstudiosdk-2022): used to specify the timeout of a unit test.
+- [DataSource](https://learn.microsoft.com/en-us/dotnet/api/microsoft.visualstudio.testtools.unittesting.datasourceattribute?view=visualstudiosdk-2022): Specifies connection string, table name and row access method for data driven testing.
+
+A good reference to learn more on attributes is [Use the MSTest framework in unit tests](https://learn.microsoft.com/en-us/visualstudio/test/using-microsoft-visualstudio-testtools-unittesting-members-in-unit-tests?view=vs-2022)
+
+### Dependencies & Mocks, Microsoft Fakes with Stubs & Shims
+
+All these concepts and techniques require specific labs and sessions.
+
+Here are few starting points:
+
+- [Microsoft Fakes](https://learn.microsoft.com/en-us/visualstudio/test/isolating-code-under-test-with-microsoft-fakes?view=vs-2022&tabs=csharp): Allows to create Stubs and Shims:
+
+  - A [stub](https://learn.microsoft.com/en-us/visualstudio/test/isolating-code-under-test-with-microsoft-fakes?view=vs-2022&tabs=csharp#get-started-with-stubs) replaces a class with a small substitute that implements the same interface.
+  - A [shim](https://learn.microsoft.com/en-us/visualstudio/test/isolating-code-under-test-with-microsoft-fakes?view=vs-2022&tabs=csharp#get-started-with-shims) modifies the compiled code of your application at runtime so that instead of making a specified method call, it runs the shim code that your test provides.
+
+- [Unit tests for generic methods](https://learn.microsoft.com/en-us/visualstudio/test/unit-tests-for-generic-methods?view=vs-2022)
+
+- Mocking dependencies: the most popular Framework to do this in .NET is [Moq](https://github.com/moq/moq4)

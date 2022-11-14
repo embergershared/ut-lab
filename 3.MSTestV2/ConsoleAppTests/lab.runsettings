@@ -3,5 +3,9 @@
   <TestRunParameters>
     <Parameter name="LabContext"
                value="H&amp;R Block BCA team" />
+    <Parameter name="ConnectionString"
+               value="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Sandbox;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False" />
+    <Parameter name="DivideTestDataTableName"
+               value="dbo.CalculatorDivideTestsData" />
   </TestRunParameters>
 </RunSettings>
