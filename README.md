@@ -434,11 +434,7 @@ The build of `ConsoleAppTests` now fails. Because the `Calculator` class does no
 >   ![Passing tests](./img/Test2_TDD-Step8.png)
 >
 
----
 
-### 3. Using MSTestV2 further
-
-In this exercise, we will use more features of MSTestV2 to improve our tests' code and testability in a Release process.
 
 
 
