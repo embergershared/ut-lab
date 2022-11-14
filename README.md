@@ -4,17 +4,17 @@
 
 - Overview
 - Lab instructions
-  - 0. Setup the lab environment
+  - 0.Setup the lab environment
         - clone the lab repo
         - Add a MSTest project to the solution
-  - 1. The first Unit Test
+  - 1.The first Unit Test
         - Create a "blank" Unit Test
         - Create a simple Unit Test
-  - 2. Unit Testing a Calculator
+  - 2.Unit Testing a Calculator
         - Test for Exception(s)
         - Create an Inline Data-driven test
         - Create the Tests before the implementation (or TDD)
-  - 3. MSTestV2
+  - 3.MSTestV2
         - TestContext
         - Initialization & Cleanup
         - `runsettings`
