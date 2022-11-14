@@ -1,7 +1,5 @@
 # Unit Testing Lab
 
-[[_TOC_]]
-
 - Overview
 - Lab instructions
   - 0.Setup the lab environment
