@@ -1,5 +1,7 @@
 # Unit Testing Lab
 
+[[_TOC_]]
+
 ## Overview
 
 In this Lab, you will:
@@ -35,6 +37,8 @@ The technologies used in this Lab are:
 
 ### 0. Setup the lab environment
 
+#### clone the lab repo
+
 To get started:
 
 - Clone the repo locally: `git clone https://github.com/embergershared/ut-lab.git`
@@ -65,7 +69,7 @@ This ConsoleApp:
 
 This allows to decouple the pieces with `seams` and enables easier testing.
 
-### Add a MSTest project to the solution
+#### Add a MSTest project to the solution
 
 You will create a Unit Test with MSTestV2 to test the `ConsoleMgr.WriteLine(string value)` method.
 
@@ -92,7 +96,9 @@ You will create a Unit Test with MSTestV2 to test the `ConsoleMgr.WriteLine(stri
 
 ---
 
-### 1. 1st Unit Test
+### 1. The first Unit Test
+
+#### Create a "blank" Unit Test
 
 - Rename `UnitTest1.cs` file to `ConsoleMgrShould.cs`
 - Accept Visual Studio rename all references by clicking `Yes`
@@ -127,6 +133,8 @@ You will create a Unit Test with MSTestV2 to test the `ConsoleMgr.WriteLine(stri
 - Run `Test / Run All Tests` from Visual Studio Menu and check in the Test Explorer the result:
 
   ![Skipped Test1](./img/Test1_Inconclusive.png)
+
+#### Create a simple Unit Test
 
 - Replace the code in the test method for:
 
@@ -549,10 +557,19 @@ In the `CalculatorShould` class:
 
 - See the `TestContext Messages` all showing the description from the test method attribute `[Description()]`
 
+#### runsettings
 
 
 
 
+
+
+#### Data-driven from SQL
+
+
+
+
+#### `dotnet test`
 
 
 
