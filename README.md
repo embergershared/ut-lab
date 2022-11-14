@@ -276,7 +276,14 @@ Let's implement the `Add(a, b)` method in `Calculator.cs`:
 
 - Replace the line `"throw new NotImplementedException();"` with `"return a + b;"`
 
-    > Note: Now the test `Add_TwoValues_ThrowAnException()` Fails
+  ```cs
+          public double Add(double a, double b)
+          {
+              return a + b;
+          }
+  ```
+
+  > Note: Now the test `Add_TwoValues_ThrowAnException()` Fails
 
 - In `CalculatorShould.cs` class, uncomment the attribute `// [Ignore]` for the `Add_TwoValues_ThrowAnException()` test
 
