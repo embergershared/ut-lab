@@ -103,18 +103,18 @@ You will create a Unit Test with MSTestV2 to test the `ConsoleMgr.WriteLine(stri
 
 - Create the following Test method in `ConsoleMgrShould.cs`:
 
-```cs
-    [TestMethod]
-    public void WriteLine_WritesToSystemConsole()
-    {
-        // Arrange
+  ```cs
+  [TestMethod]
+  public void WriteLine_WritesToSystemConsole()
+  {
+      // Arrange
 
-        // Act
+      // Act
 
-        // Assert
-        Assert.Inconclusive();
-    }
-```
+      // Assert
+      Assert.Inconclusive();
+  }
+  ```
 
   > This simple unit test method has the structure recommended for a Unit Test:
   >
@@ -126,29 +126,29 @@ You will create a Unit Test with MSTestV2 to test the `ConsoleMgr.WriteLine(stri
 
 - Run `Test / Run All Tests` from Visual Studio Menu and check in the Test Explorer the result:
 
-![Skipped Test1](./img/Test1_Inconclusive.png)
+  ![Skipped Test1](./img/Test1_Inconclusive.png)
 
 - Replace the code in the test method for:
 
-```cs
-    [TestMethod]
-    public void WriteLine_WritesToSystemConsole()
-    {
-        // Arrange
-        const string expected = "Hello to the console";
-        var sut = new ConsoleMgr();
+  ```cs
+  [TestMethod]
+  public void WriteLine_WritesToSystemConsole()
+  {
+      // Arrange
+      const string expected = "Hello to the console";
+      var sut = new ConsoleMgr();
 
-        using var sw = new StringWriter();
-        Console.SetOut(sw);
+      using var sw = new StringWriter();
+      Console.SetOut(sw);
 
-        // Act
-        sut.WriteLine(expected);
-        var actual = sw.ToString();
+      // Act
+      sut.WriteLine(expected);
+      var actual = sw.ToString();
 
-        // Assert
-        Assert.AreEqual(expected, actual);
-    }
-```
+      // Assert
+      Assert.AreEqual(expected, actual);
+  }
+  ```
 
   > The variable `sut` stands for `System Under Test`. With this convention, we easily know what is tested in the unit test code.
   >
@@ -164,11 +164,11 @@ You will create a Unit Test with MSTestV2 to test the `ConsoleMgr.WriteLine(stri
 
   - In the Test Explorer, right-click on the test and launch `Debug`:
 
-![Launch Debug](./img/Test1_LaunchDebug.png)
+    ![Launch Debug](./img/Test1_LaunchDebug.png)
 
   - You can see in the breakpoint that we get an object that may not render back our expected variable as we don't control the formatting of the `.ToString()` extension
 
-  ![Launch Debug](./img/Test1_SeeDebug.png)
+    ![Launch Debug](./img/Test1_SeeDebug.png)
 
   - To fix the test: add `.Trim()` after the `.ToString()` for the actual value
 
@@ -200,12 +200,12 @@ Let's get started:
 
 - Create the `Add` method in the Calculator class:
 
-```cs
+  ```cs
     public double Add(double a, double b)
     {
         throw new NotImplementedException();
     }
-```
+  ```
 
 - Create a new Class `CalculatorShould.cs` in the `ConsoleAppTests` project
 
@@ -219,7 +219,7 @@ Let's get started:
 
   - From the template:
 
-```cs
+    ```cs
     [TestMethod]
     public void Add_TwoValues_ThrowAnException()
     {
@@ -230,11 +230,11 @@ Let's get started:
         // Assert
         Assert.Inconclusive();
     }
-```
+    ```
 
   - Create this test:
 
-```cs
+    ```cs
     // [Ignore]
     [TestMethod]
     [Description("Check for a thrown NotImplementedException using TryCatch.")]
@@ -258,7 +258,7 @@ Let's get started:
         // Test failed
         Assert.Fail("Call to Add(2, 3) did NOT throw an NotImplementedException");
     }
-```
+    ```
 
 - Run All tests
 
@@ -276,12 +276,12 @@ Let's implement the `Add(a, b)` method in `Calculator.cs`:
 
 - Replace the line `"throw new NotImplementedException();"` with `"return a + b;"`
 
-  ```cs
-          public double Add(double a, double b)
-          {
-              return a + b;
-          }
-  ```
+    ```cs
+    public double Add(double a, double b)
+    {
+        return a + b;
+    }
+    ```
 
   > Note: Now the test `Add_TwoValues_ThrowAnException()` Fails
 
@@ -295,7 +295,7 @@ Let's implement the `Add(a, b)` method in `Calculator.cs`:
 
 - Create a new method: `Add_TwoValues_Calculates()`:
 
-```cs
+    ```cs
     [TestMethod]
     [Description("Testing Calculator.Add() with multiple values.")]
     [Owner("Emmanuel")]
@@ -315,21 +315,21 @@ Let's implement the `Add(a, b)` method in `Calculator.cs`:
         // Assert
         Assert.AreEqual(expected, actual);
     }
-```
+    ```
 
 - Run the Test and see few differences:
 
   ![Data-driven test](./img/Test2_DD-Test.png)
 
-> Notice:
->
-> - The attributes `[Owner()]`, `[Priority()]` & `[TestCategory()]` generates `Traits` that can be used later to filter the tests, like in `dotnet test [] --filter "Priority=2"`.
->
-> - The attribute `[Description()]` is added to the `TestContext` and we'll use it later
->
-> - The `[DataRow()]` attribute allows us to pass data as an `object[]` type. Each attribute generates a test of the test method. The `DisplayName` argument allows to differentiate the tests instances in the display, as one or more can `Fail`
->
-> - Notice that we also test the "edge" cases with the `double.MaxValue` value
+  > Notice:
+  >
+  > - The attributes `[Owner()]`, `[Priority()]` & `[TestCategory()]` generates `Traits` that can be used later to filter the tests, like in `dotnet test [] --filter "Priority=2"`.
+  >
+  > - The attribute `[Description()]` is added to the `TestContext` and we'll use it later
+  >
+  > - The `[DataRow()]` attribute allows us to pass data as an `object[]` type. Each attribute generates a test of the test method. The `DisplayName` argument allows to differentiate the tests instances in the display, as one or more can `Fail`
+  >
+  > - Notice that we also test the "edge" cases with the `double.MaxValue` value
 
 #### Create the Tests before the implementation (or TDD)
 
@@ -346,39 +346,39 @@ To do that, let's think about the tests that support the **behavior** we want to
 
 We can create the tests for that:
 
-```cs
-    [TestMethod]
-    [Description("Testing Calculator.Divide() with multiple values.")]
-    [Owner("Emmanuel")]
-    [Priority(2)]
-    [TestCategory("NormalValues")]
-    [DataRow(10, 2, 5, DisplayName = "Test for 10 / 5")]
-    [DataRow(34.67, 9.6, 3.6114, DisplayName = "Test for 34.67 / 9.6")]
-    [DataRow(56, 0, 0, DisplayName = "Test for 56 / 0")]
-    [DataRow(10, -5, -2, DisplayName = "Test for 10 / -5")]
-    public void Divide_TwoValues_Calculates(double a, double b, double expected)
-    {
-        // Arrange
-        var sut = new Calculator();
+  ```cs
+  [TestMethod]
+  [Description("Testing Calculator.Divide() with multiple values.")]
+  [Owner("Emmanuel")]
+  [Priority(2)]
+  [TestCategory("NormalValues")]
+  [DataRow(10, 2, 5, DisplayName = "Test for 10 / 5")]
+  [DataRow(34.67, 9.6, 3.6114, DisplayName = "Test for 34.67 / 9.6")]
+  [DataRow(56, 0, 0, DisplayName = "Test for 56 / 0")]
+  [DataRow(10, -5, -2, DisplayName = "Test for 10 / -5")]
+  public void Divide_TwoValues_Calculates(double a, double b, double expected)
+  {
+      // Arrange
+      var sut = new Calculator();
 
-        // Act
-        var actual = sut.Divide(a, b);
+      // Act
+      var actual = sut.Divide(a, b);
 
-        // Assert
-        Assert.AreEqual(expected, actual);
-    }
-```
+      // Assert
+      Assert.AreEqual(expected, actual);
+  }
+  ```
 
 The build of `ConsoleAppTests` now fails. Because the `Calculator` class does not contain a definition for the `Divide()` method. Let's implement it:
 
 - Create the member method in the `Calculator` class with the "normal" code one would put:
 
-```cs
-    public double Divide(double a, double b)
-    {
-        return a / b;
-    }
-```
+  ```cs
+  public double Divide(double a, double b)
+  {
+      return a / b;
+  }
+  ```
 
 - Run the Tests to see the results:
 
@@ -422,33 +422,132 @@ The build of `ConsoleAppTests` now fails. Because the `Calculator` class does no
 
     ![Passing tests](./img/Test2_TDD-Step4.png)
 
-> Note:
->
-> With Visual Studio Enterprise Edition:
->
-> - You can see the code coverage of the classes (_Test / Analyze code coverage for All Tests_), in the `Code Coverage Results` view:
->
->    ![Passing tests](./img/Test2_TDD-Step5.png)
->
-> - You can display colored lines and see which ones are covered by Unit Tests (blue ones being covered):
->
->   ![Passing tests](./img/Test2_TDD-Step6.png)
->
->   ![Passing tests](./img/Test2_TDD-Step7.png)
->
-> - You can turn ON Live Unit Testing and see in real-time, in the code edited, the results of its associated tests:
->
->   ![Passing tests](./img/Test2_TDD-Step8.png)
->
+  > Note:
+  >
+  > With Visual Studio Enterprise Edition:
+  >
+  > - You can see the code coverage of the classes (_Test / Analyze code coverage for All Tests_), in the `Code Coverage Results` view:
+  >
+  >    ![Passing tests](./img/Test2_TDD-Step5.png)
+  >
+  > - You can display colored lines and see which ones are covered by Unit Tests (blue ones being covered):
+  >
+  >   ![Passing tests](./img/Test2_TDD-Step6.png)
+  >
+  >   ![Passing tests](./img/Test2_TDD-Step7.png)
+  >
+  > - You can turn ON Live Unit Testing and see in real-time, in the code edited, the results of its associated tests:
+  >
+  >   ![Passing tests](./img/Test2_TDD-Step8.png)
+  >
 
+---
 
+### 3. MSTestV2
 
+In this exercise, we will use features from MSTestV2 that eases Unit Testing.
 
+#### TestContext
 
+The [TestContext Class](https://learn.microsoft.com/en-us/dotnet/api/microsoft.visualstudio.testtools.unittesting.testcontext?view=visualstudiosdk-2022) is used to store information that is provided to unit tests.
 
+We will use this Class to gather the `[Description]` attribute of a test and display it in the test message.
 
+As this can be handy for all test classes, we will use the fact that unit tests are code:
 
+- Create a new `Class` named `TestBase` in the `ConsoleAppTests` project
 
+- Make it `public`
+
+- Add a public property to it:
+
+  ```cs
+  public TestContext? TestContext { get; set; }
+  ```
+
+  > Note: You'll need the `using Microsoft.VisualStudio.TestTools.UnitTesting;` if Visual Studio didn't add it for you.
+
+- Add to the `TestBase` class the following method:
+
+  ```cs
+  // Using Description Attribute
+  protected void WriteDescription(Type type)
+  {
+      // Check for the required context
+      if (TestContext == null) return;
+      var testName = TestContext.TestName;
+      if (testName == null) return;
+      var method = type.GetMethod(testName);
+      if (method == null) return;
+
+      // Check for a description attribute
+      var descAttribute = method.GetCustomAttribute<DescriptionAttribute>();
+      if (descAttribute != null)
+      {
+          TestContext.WriteLine($"Test description: {descAttribute.Description}");
+      }
+  }
+  ```
+
+  > Note: You'll need the `using System;` & `using System.Reflection;` if Visual Studio didn't add it for you.
+
+- Modify `CalculatorShould` class to inherit from `TestBase`
+
+- Add `WriteDescription(GetType());` at the beginning of the method `Add_TwoValues_Calculates()`. The method content should like this now:
+
+  ```cs
+  public void Add_TwoValues_Calculates(double a, double b, double expected)
+  {
+      WriteDescription(GetType());
+
+      // Arrange
+      var sut = new Calculator();
+
+      // Act
+      var actual = sut.Add(a, b);
+
+      // Assert
+      Assert.AreEqual(expected, actual);
+  }
+  ```
+
+- Run All Tests
+
+- Look at the Test Detail Summary of one of the 3 tests and see the message, in the `Standard Output: TestContext Messages:` section:
+
+  ![Passing tests](./img/Test3_Img1.png)
+
+#### Initialization & Cleanup
+
+Most Unit Tests frameworks provide features to reduce duplication of code.
+
+To use this new method `WriteDescription()` in all our tests, we will use higher levels attributes from MSTest. It will allow to call the method in the code once, but all the tests methods will execute it.
+
+MSTest has these attributes to Initialize at higher levels than the test methods:
+
+Level | Attributes | Comment
+---------|----------|----------
+[Assembly](https://learn.microsoft.com/en-us/visualstudio/test/using-microsoft-visualstudio-testtools-unittesting-members-in-unit-tests?view=vs-2022#assembly) | `[AssemblyInitialize()]` </p> `[AssemblyCleanup()]` | Linked to the Assembly lifecycle. See the documentation link for their declaration.
+[Class](https://learn.microsoft.com/en-us/visualstudio/test/using-microsoft-visualstudio-testtools-unittesting-members-in-unit-tests?view=vs-2022#class) | `[ClassInitialize()]` </p> `[ClassCleanup()]` | Linked to the Test Class lifecycle. See the documentation link for their declaration.
+[Test](https://learn.microsoft.com/en-us/visualstudio/test/using-microsoft-visualstudio-testtools-unittesting-members-in-unit-tests?view=vs-2022#test) | `[TestInitialize]` </p> `[TestCleanup]` | Linked to the Test lifecycle. See the documentation link for their declaration. Note the absence of `()` in the attribute declaration.
+
+In the `CalculatorShould` class:
+
+- Remove the line `WriteDescription(GetType());` added in previous step in the `Add_TwoValues_Calculates()` method
+
+- Add this method in the class code:
+
+  ```cs
+  [TestInitialize]
+  public void TestInitialize()
+  {
+      WriteDescription(GetType());
+  }
+  ```
+
+- Run All Tests
+
+- See the `TestContext Messages` all showing the description from the test method attribute `[Description()]`
 
 
 

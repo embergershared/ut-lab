@@ -1,12 +1,17 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using ConsoleApp.Classes;
 
 namespace ConsoleAppTests
 {
     [TestClass]
-    public class CalculatorShould
+    public class CalculatorShould : TestBase
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            WriteDescription(GetType());
+        }
+
         [TestMethod]
         [Description("Testing Calculator.Add() with multiple values.")]
         [Owner("Emmanuel")]
@@ -17,6 +22,8 @@ namespace ConsoleAppTests
         [DataRow(double.MaxValue, 100, double.MaxValue, DisplayName = "Test for (double) MaxValue")]
         public void Add_TwoValues_Calculates(double a, double b, double expected)
         {
+            //WriteDescription(GetType());
+
             // Arrange
             var sut = new Calculator();
 
