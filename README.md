@@ -5,9 +5,8 @@
 In this Lab, you will:
 
 - start from a simple ConsoleApp implemented for testing and create simple Unit Test,
-- Add a basic Calculator class and Unit Test its `Add` method,
-- use a TDD approach to implement the `Divide` method in the Calculator,
-- add more tests with different Asserts, attributes and settings for the tests,
+- Add a basic `Calculator` class and Unit Test its `Add()` method,
+- use a TDD approach to implement the `Divide()` method in the Calculator,
 - to end with wiring an external MS SQL database for tests values.
 
 The aim is to browse quickly from simple to advanced Unit Tests capabilities.
@@ -110,9 +109,9 @@ You will create a Unit Test with MSTestV2 to test the `ConsoleMgr.WriteLine(stri
     {
         // Arrange
 
-        // Assert
-
         // Act
+
+        // Assert
         Assert.Inconclusive();
     }
 ```
@@ -187,9 +186,263 @@ You will create a Unit Test with MSTestV2 to test the `ConsoleMgr.WriteLine(stri
 
 In this exercise, we will create and test a very simple calculator to explore:
 
-- Catching exceptions in Unit Tests
+- Test for exception(s) in Unit Tests
 - Use multiple data in a test (Data-driven testing)
-- Create a test before a Method implementation (TDD)
+- Create the tests before the Method implementation (TDD)
+
+Let's get started:
+
+#### Test for Exception(s)
+
+- Create a new Class `Calculator.cs` in the `ConsoleApp` project's `Classes` folder
+
+- Make the class `public`
+
+- Create the `Add` method in the Calculator class:
+
+```cs
+    public double Add(double a, double b)
+    {
+        throw new NotImplementedException();
+    }
+```
+
+- Create a new Class `CalculatorShould.cs` in the `ConsoleAppTests` project
+
+- Make the class `public`
+
+- Add the [TestClass] attribute to the class (just above the `public class` declaration)
+
+  > This attribute tells MSTestV2 to include this class in its tests
+
+- Now create the TestMethod:
+
+  - From the template:
+
+```cs
+    [TestMethod]
+    public void Add_TwoValues_ThrowAnException()
+    {
+        // Arrange
+
+        // Act
+
+        // Assert
+        Assert.Inconclusive();
+    }
+```
+
+  - Create this test:
+
+```cs
+    // [Ignore]
+    [TestMethod]
+    [Description("Check for a thrown NotImplementedException using TryCatch.")]
+    public void Add_TwoValues_ThrowAnException()
+    {
+        // Arrange
+        var sut = new Calculator();
+
+        try
+        {
+          // Act
+          sut.Add(2, 3);
+        }
+        // Assert
+        catch (NotImplementedException)
+        {
+            // Test succeeded
+            return;
+        }
+
+        // Test failed
+        Assert.Fail("Call to Add(2, 3) did NOT throw an NotImplementedException");
+    }
+```
+
+- Run All tests
+
+- See that the test `Passed` as we expect an Exception and receive it:
+
+  ![ThrownException Pass](./img/Test2_PassThrownException.png)
+
+    > The other way to test for an `Exception` is to use the attribute `[ExpectedException(typeof(NotImplementedException))]`
+    >
+    > For fun, replace the `throw new NotImplementedException();` by `throw new ArgumentNullException();` and see that the test `Fail`
+
+#### Use a Data-driven test
+
+Let's implement the `Add(a, b)` method in `Calculator.cs`:
+
+- Replace the line `"throw new NotImplementedException();"` with `"return a + b;"`
+
+    > Note: Now the test `Add_TwoValues_ThrowAnException()` Fails
+
+- In `CalculatorShould.cs` class, uncomment the attribute `// [Ignore]` for the `Add_TwoValues_ThrowAnException()` test
+
+- When running the test, it is now `Skipped`
+
+    > The `[Ignore]` attribute can be helpful, but should be used as a temporary approach while building the implementations and their tests. Skipped tests should not stay in code.
+
+- Delete the method `Add_TwoValues_ThrowAnException()`
+
+- Create a new method: `Add_TwoValues_Calculates()`:
+
+```cs
+    [TestMethod]
+    [Description("Testing Calculator.Add() with multiple values.")]
+    [Owner("Emmanuel")]
+    [Priority(2)]
+    [TestCategory("NormalValues")]
+    [DataRow(6, 2, 8, DisplayName = "Test for (int) 6 + 2")]
+    [DataRow(45.7, 12.89, 58.59, DisplayName = "Test for (double) 45.7 + 12.89")]
+    [DataRow(double.MaxValue, 100, double.MaxValue, DisplayName = "Test for (double) MaxValue")]
+    public void Add_TwoValues_Calculates(double a, double b, double expected)
+    {
+        // Arrange
+        var sut = new Calculator();
+
+        // Act
+        var actual = sut.Add(a, b);
+
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+```
+
+- Run the Test and see few differences:
+
+  ![Data-driven test](./img/Test2_DD-Test.png)
+
+> Notes:
+>
+> - The attributes `[Owner()]`, `[Priority()]` & `[TestCategory()]` generates `Traits` that can be use later to filter the tests, sort the results, etc.
+>
+> - The attribute `[Description()]` is added to the `TestContext` and we'll use it later
+>
+> - The `[DataRow()]` attribute allows us to pass data as a `object[]` type. Each attribute generates a test of the test method. The `DisplayName` argument allows to differentiate the tests instances in the display, as one or more can `Fail`
+>
+> - Notice that we also test the "edge" cases with the `double.MaxValue` value
+
+#### Create the Tests before the implementation (or TDD)
+
+This example is not an introduction to Test-Driven Development. It is just an awareness exercise.
+
+We will implement a `Divide()` method for the `Calculator` class.
+
+To do that, let's think about the tests that support the **behavior** we want to achieve:
+
+- What should happen when we "divide 10 by 2?" => we get 5
+- What should happen when we "divide 34.67 by 9.6?" => we get 3.6114583333333333333333
+- What should happen when we "divide _anything_ by 0?" => we decide we want to get 0
+- What should happen when we "divide 10 by -5?" => we get -2
+
+We can create the tests for that:
+
+```cs
+    [TestMethod]
+    [Description("Testing Calculator.Divide() with multiple values.")]
+    [Owner("Emmanuel")]
+    [Priority(2)]
+    [TestCategory("NormalValues")]
+    [DataRow(10, 2, 5, DisplayName = "Test for 10 / 5")]
+    [DataRow(34.67, 9.6, 3.6114, DisplayName = "Test for 34.67 / 9.6")]
+    [DataRow(56, 0, 0, DisplayName = "Test for 56 / 0")]
+    [DataRow(10, -5, -2, DisplayName = "Test for 10 / -5")]
+    public void Divide_TwoValues_Calculates(double a, double b, double expected)
+    {
+        // Arrange
+        var sut = new Calculator();
+
+        // Act
+        var actual = sut.Divide(a, b);
+
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+```
+
+The build of `ConsoleAppTests` now fails. Because the `Calculator` class does not contain a definition for the `Divide()` method. Let's implement it:
+
+- Create the member method in the `Calculator` class with the "normal" code one would put:
+
+```cs
+    public double Divide(double a, double b)
+    {
+        return a / b;
+    }
+```
+
+- Run the Tests to see the results:
+
+    ![Failing tests](./img/Test2_TDD-Step1.png)
+
+- Fix the failing tests, based on their details:
+
+  - Rounding errors
+
+    ![Failing rounding](./img/Test2_TDD-Step2.png)
+
+    For this test to pass, we have to set the `accuracy` of our test, by setting its `delta`.
+    This change is to be done **in the test method**:
+
+    - Add the `delta` argument to the Assert line: `Assert.AreEqual(expected, actual, 0.0001);`
+
+    The accuracy should be adapted to the Data provided for the expected result of the test
+
+  - Division by zero
+
+    ![Failing divide by zero](./img/Test2_TDD-Step3.png)
+
+    For this test to pass, we need to edit our `Divide()` method implementation:
+
+    ```cs
+    public double Divide(double a, double b)
+    {
+        if (b != 0)
+        {
+            return a / b;
+        }
+
+        // Arbitrary decision to handle division by 0
+        return 0;
+    }
+    ```
+
+- Implement the changes in code
+
+- See all the tests `Pass`:
+
+    ![Passing tests](./img/Test2_TDD-Step4.png)
+
+> Note:
+>
+> With Visual Studio Enterprise Edition:
+>
+> - You can see the code coverage of the classes (_Test / Analyze code coverage for All Tests_), in the `Code Coverage Results` view:
+>
+>    ![Passing tests](./img/Test2_TDD-Step5.png)
+>
+> - You can display colored lines and see which ones are covered by Unit Tests (blue ones being covered):
+>
+>   ![Passing tests](./img/Test2_TDD-Step6.png)
+>
+>   ![Passing tests](./img/Test2_TDD-Step7.png)
+>
+> - You can turn ON Live Unit Testing and see in real-time, in the code edited, the results of its associated tests:
+>
+>   ![Passing tests](./img/Test2_TDD-Step8.png)
+>
+
+---
+
+### 3. Using MSTestV2 further
+
+In this exercise, we will use more features of MSTestV2 to improve our tests' code and testability in a Release process.
+
+
+
+
 
 
 
@@ -203,6 +456,9 @@ In this exercise, we will create and test a very simple calculator to explore:
 
 
 ---
+
+
+
 
 ## References
 
