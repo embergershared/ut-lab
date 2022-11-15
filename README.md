@@ -619,7 +619,7 @@ We'll use the manual selection:
 
 Let's use the parameter. It is available through the `TestContext.Properties["<Parameter name>"]`:
 
-- In `TestBse.cs` add the following method:
+- In `TestBase.cs` add the following method:
 
   ```cs
   protected void WriteLabContext()
