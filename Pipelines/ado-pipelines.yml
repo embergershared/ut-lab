@@ -5,7 +5,6 @@ pool: "SelfHosted"
 
 variables:
   buildConfiguration: 'Release'
-  # wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
   dotnetSdkVersion: '6.x'
 
 steps:
@@ -14,20 +13,9 @@ steps:
   inputs:
     version: '$(dotnetSdkVersion)'
 
-# - task: Npm@1
-#   displayName: 'Run npm install'
-#   inputs:
-#     verbose: false
-
-# - script: './node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)'
-#   displayName: 'Compile Sass assets'
-
-# - task: gulp@1
-#   displayName: 'Run gulp tasks'
 
 - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
   displayName: 'Write build info'
-#   workingDirectory: $(wwwrootDir)
 
 - task: DotNetCoreCLI@2
   displayName: 'Restore project dependencies'
@@ -41,6 +29,15 @@ steps:
     command: 'build'
     arguments: '--no-restore --configuration $(buildConfiguration)'
     projects: '**/*.csproj'
+
+# Added Unit Test
+- task: DotNetCoreCLI@2
+  displayName: 'Run unit tests - $(buildConfiguration)'
+  inputs:
+    command: 'test'
+    arguments: '--no-build --configuration $(buildConfiguration)'
+    publishTestResults: true
+    projects: '**/*.Tests.csproj'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish the project - $(buildConfiguration)'
