@@ -35,9 +35,9 @@ steps:
   displayName: 'Run unit tests - $(buildConfiguration)'
   inputs:
     command: 'test'
-    arguments: '--no-build --settings .\lab.runsettings'
+    arguments: '--no-build --settings /3.MSTestV2/ConsoleAppTests/lab.runsettings'
     publishTestResults: true
-    projects: '**/*.csproj'
+    projects: '/3.MSTestV2/ConsoleAppTests/ConsoleAppTests.csproj'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish the project - $(buildConfiguration)'
