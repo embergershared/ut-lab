@@ -37,6 +37,7 @@ steps:
     script: |
       pwd
       ls
+      ls /2.Calculator/ConsoleAppTests/
 
 # Added Unit Test
 - task: DotNetCoreCLI@2
