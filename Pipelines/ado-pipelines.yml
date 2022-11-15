@@ -44,7 +44,7 @@ steps:
   displayName: 'Run unit tests - $(buildConfiguration)'
   inputs:
     command: 'test'
-    arguments: '--settings /2.Calculator/ConsoleAppTests/bin/Debug/net6.0/lab.runsettings'
+    #arguments: '--settings /2.Calculator/ConsoleAppTests/bin/Debug/net6.0/lab.runsettings'
     publishTestResults: true
     projects: '**/2.Calculator/ConsoleAppTests/*.csproj'
 
