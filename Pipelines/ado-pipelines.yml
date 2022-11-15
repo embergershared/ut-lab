@@ -30,6 +30,14 @@ steps:
     arguments: '--no-restore --configuration $(buildConfiguration)'
     projects: '**/*.csproj'
 
+# Debug
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: |
+      pwd
+      ls
+
 # Added Unit Test
 - task: DotNetCoreCLI@2
   displayName: 'Run unit tests - $(buildConfiguration)'
